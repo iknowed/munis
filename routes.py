@@ -13,17 +13,17 @@ import math
 import re
 import os
 import munis
-from console.models import Vehicle
-from console.models import Route
-from console.models import RouteStop
-from console.models import Run
-from console.models import Path
-from console.models import Point
-from console.models import Stop
-from console.models import Direction
-from console.models import DirectionStop
-from console.models import DirectionPath
-from console.models import Speed
+from con.models import Vehicle
+from con.models import Route
+from con.models import RouteStop
+from con.models import Run
+from con.models import Path
+from con.models import Point
+from con.models import Stop
+from con.models import Direction
+from con.models import DirectionStop
+from con.models import DirectionPath
+from con.models import Speed
 import django.contrib.gis
 from django.db import connection, transaction
 from django.contrib.gis.gdal import SpatialReference, CoordTransform,OGRGeometry
@@ -245,9 +245,9 @@ for route in Route.objects.all():
   for direction in Direction.objects.filter(route=route):
     paths = {}
 
-      #sql = "select distinct(pa.id),ST_Distance(s.loc,pa.loc) from console_directionpath dp, console_directionstop ds, console_stop s, console_path pa where dp.direction_id={0} and s.id={1} and ds.stop_id = s.id and dp.path_id=pa.id order by ST_Distance(s.loc,pa.loc) asc limit 1".format(direction.id,direction_stop.stop_id)
+      #sql = "select distinct(pa.id),ST_Distance(s.loc,pa.loc) from con_directionpath dp, con_directionstop ds, con_stop s, con_path pa where dp.direction_id={0} and s.id={1} and ds.stop_id = s.id and dp.path_id=pa.id order by ST_Distance(s.loc,pa.loc) asc limit 1".format(direction.id,direction_stop.stop_id)
     for direction_stop in DirectionStop.objects.filter(direction=direction).order_by('seq'):
-      sql = "select distinct(pa.id),ST_Distance(s.loc,pa.loc) from console_directionstop ds, console_stop s, console_path pa where s.id={1} and ds.stop_id = s.id order by ST_Distance(s.loc,pa.loc) asc limit 1".format(direction.id,direction_stop.stop_id)
+      sql = "select distinct(pa.id),ST_Distance(s.loc,pa.loc) from con_directionstop ds, con_stop s, con_path pa where s.id={1} and ds.stop_id = s.id order by ST_Distance(s.loc,pa.loc) asc limit 1".format(direction.id,direction_stop.stop_id)
       cursor = connection.cursor()
       cursor.execute(sql)
       row = cursor.fetchone()
