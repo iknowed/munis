@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('seq', models.IntegerField(blank=True, db_index=True)),
-                ('direction', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Direction')),
+                ('direction', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Direction')),
             ],
         ),
         migrations.CreateModel(
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('seq', models.IntegerField(blank=True, db_index=True)),
                 ('stopid', models.CharField(blank=True, max_length=8)),
-                ('direction', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Direction')),
+                ('direction', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Direction')),
             ],
         ),
         migrations.CreateModel(
@@ -69,7 +69,7 @@ class Migration(migrations.Migration):
                 ('seq', models.IntegerField(blank=True)),
                 ('lat', models.FloatField(blank=True)),
                 ('lon', models.FloatField(blank=True)),
-                ('path', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Path')),
+                ('path', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Path')),
             ],
         ),
         migrations.CreateModel(
@@ -93,7 +93,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('seq', models.IntegerField(blank=True, db_index=True)),
-                ('route', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Route')),
+                ('route', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Route')),
             ],
         ),
         migrations.CreateModel(
@@ -109,8 +109,8 @@ class Migration(migrations.Migration):
                 ('log', models.TextField(blank=True)),
                 ('runlets', models.IntegerField(blank=True, db_index=True)),
                 ('freq', models.IntegerField(blank=True, db_index=True)),
-                ('direction', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Direction')),
-                ('route', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Route')),
+                ('direction', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Direction')),
+                ('route', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Route')),
             ],
         ),
         migrations.CreateModel(
@@ -128,8 +128,8 @@ class Migration(migrations.Migration):
                 ('distance', models.FloatField(blank=True, db_index=True)),
                 ('stop', models.TextField(blank=True)),
                 ('stop_seq', models.IntegerField(blank=True)),
-                ('path', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Path')),
-                ('run', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Run')),
+                ('path', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Path')),
+                ('run', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Run')),
             ],
         ),
         migrations.CreateModel(
@@ -142,9 +142,9 @@ class Migration(migrations.Migration):
                 ('min', models.FloatField(blank=True, db_index=True)),
                 ('max', models.FloatField(blank=True, db_index=True)),
                 ('navg', models.IntegerField(blank=True, db_index=True)),
-                ('direction', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Direction')),
-                ('path', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Path')),
-                ('route', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Route')),
+                ('direction', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Direction')),
+                ('path', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Path')),
+                ('route', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Route')),
             ],
         ),
         migrations.CreateModel(
@@ -184,38 +184,38 @@ class Migration(migrations.Migration):
                 ('leadingvehicleid', models.TextField(blank=True)),
                 ('stop', models.TextField(blank=True)),
                 ('stop_seq', models.IntegerField(blank=True)),
-                ('direction', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Direction')),
-                ('route', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Route')),
+                ('direction', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Direction')),
+                ('route', models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Route')),
             ],
         ),
         migrations.AddField(
             model_name='run',
             name='vehicle',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Vehicle'),
+            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Vehicle'),
         ),
         migrations.AddField(
             model_name='routestop',
             name='stop',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Stop'),
+            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Stop'),
         ),
         migrations.AddField(
             model_name='path',
             name='route',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Route'),
+            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Route'),
         ),
         migrations.AddField(
             model_name='directionstop',
             name='stop',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Stop'),
+            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Stop'),
         ),
         migrations.AddField(
             model_name='directionpath',
             name='path',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Path'),
+            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Path'),
         ),
         migrations.AddField(
             model_name='direction',
             name='route',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='console.Route'),
+            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, to='con.Route'),
         ),
     ]

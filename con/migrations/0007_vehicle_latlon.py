@@ -9,7 +9,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('console', '0006_auto_20180401_1846'),
+        ('con', '0006_auto_20180401_1846'),
     ]
 
     operations = [
