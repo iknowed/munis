@@ -11,10 +11,10 @@ import time
 import math
 import re
 import psycopg2
-from console.models import Vehicle
-from console.models import Route
-from console.models import Direction
-from console.models import Run
+from con.models import Vehicle
+from con.models import Route
+from con.models import Direction
+from con.models import Run
 
 import os
 import django.contrib.gis
@@ -74,7 +74,7 @@ def getNearestPath(self):
   #sql = "select pa.id,ST_Distance(ST_GeomFromEWKT('SRID=4326;POINT(%s %s)'), pa.loc) from path pa, route r where r.tag=%s and pa.route_id=r.id order by ST_Distance(ST_GeomFromEWKT('SRID=4326;POINT(%s %s)'),pa.loc) asc"
   #ST_GeomFromEWKT('SRID=4326;POINT(%s %s)')
   (x,y) = latlon2city(self.lon,self.lat)
-  sql = "select dp.path_id,ST_Distance( ST_GeomFromEWKT('SRID=100000;POINT("+ str(x) + " " + str(y) + ")'), pa.loc) from console_directionpath dp, console_direction d, console_path pa where d.tag=%s and dp.direction_id=d.id and pa.id=dp.path_id order by ST_Distance( ST_GeomFromEWKT('SRID=100000;POINT("+ str(x) + " " + str(y) + ")'), pa.loc),pa.loc asc"
+  sql = "select dp.path_id,ST_Distance( ST_GeomFromEWKT('SRID=100000;POINT("+ str(x) + " " + str(y) + ")'), pa.loc) from con_directionpath dp, con_direction d, con_path pa where d.tag=%s and dp.direction_id=d.id and pa.id=dp.path_id order by ST_Distance( ST_GeomFromEWKT('SRID=100000;POINT("+ str(x) + " " + str(y) + ")'), pa.loc),pa.loc asc"
   #cur = self.db.cursor()
   cur = connection.cursor()
   cur.execute(sql,(self.dirTag,))
@@ -83,6 +83,25 @@ def getNearestPath(self):
     return None
   else:
     return res[0]
+
+def getNearestStreet(self):
+  (x,y) = latlon2city(self.lon,self.lat)
+  min_heading_one = (self.heading * 1.25) % 360
+  max_heading_one = (self.heading * 0.75) % 360
+  if max_heading_one < min_heading_one:
+      min_heading = max_heading_one
+      max_heading = min_heading_one
+  else:
+      min_heading = min_heading_one
+      max_heading = max_heading_one
+  sql = "select s.street,s.rt_fadd::int,ST_Distance( ST_GeomFromEWKT('SRID=2227;POINT({0} {1})'), s.the_geom), ((180/3.1415926)*ST_Azimuth(ST_StartPoint(s.the_geom),ST_EndPoint(s.the_geom))::int % 360)::int  as degrees from stclines_streets s order by ST_Distance( ST_GeomFromEWKT('SRID=2227;POINT({0} {1})'), s.the_geom) asc limit 10".format(str(x),str(y))
+  cur = connection.cursor()
+  cur.execute(sql)
+  res = cur.fetchone()
+  if(res == None):
+    return None
+  else:
+    return { 'street': res[0], 'block': res[1], 'distance': res[2], 'degrees': res[3] }
 
 
 def hasOpenRun(old):
@@ -374,13 +393,13 @@ def closeOrphanRuns(db,t):
   
 
 url = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=sf-muni&r=22&t="
-#db = postgresql.open("pq://muni:mta@cybre.net/municonsole")
+#db = postgresql.open("pq://muni:mta@cybre.net/municon")
 
 t = 0
 
 while(1):
   try:
-  #  db = psycopg2.connect("dbname=municonsole user=muni password=mta host=cybre.net")
+  #  db = psycopg2.connect("dbname=municon user=muni password=mta host=cybre.net")
     dom = minidom.parse(urlopen(url+str(t)))
   except:
     time.sleep(5)
@@ -393,8 +412,15 @@ while(1):
   for vehicle in dom.getElementsByTagName("vehicle"):
     new = Vehicle()
     new.vid = vehicle.getAttribute('id')
-    new.route = Route.objects.filter(tag=vehicle.getAttribute('routeTag'))[0]
-    new.direction = Direction.objects.filter(tag=vehicle.getAttribute('dirTag'))[0]
+    try:
+        new.route = Route.objects.filter(tag=vehicle.getAttribute('routeTag'))[0]
+    except Exception as e:
+        print "can't find routeTag: {0}".format(vehicle.getAttribute('routeTag'))
+    try:
+        new.direction = Direction.objects.filter(tag=vehicle.getAttribute('dirTag'))[0]
+    except Exception as e:
+        print "can't find dirTag: {0}".format(vehicle.getAttribute('dirTag'))
+        continue
     new.routeTag = vehicle.getAttribute('routeTag')
     new.dirTag = vehicle.getAttribute('dirTag')
     new.dirTag = unicode(re.sub(u'(OB|IB).*$',u'\\1',new.dirTag))
@@ -417,7 +443,8 @@ while(1):
 #    if(isInYard(new)):
 #      continue
     p = getNearestPath(new)
-
+    s = getNearestStreet(new)
+    print new.vid, new.heading, s
     try:
         new.save()
     except Exception as e:
